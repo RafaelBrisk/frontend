@@ -1,0 +1,32 @@
+create table lanche(
+id serial primary key,
+nome varchar(255) not null,
+valor numeric(10, 2) not null
+);
+
+create table ingrediente(
+id serial primary key,
+nome varchar(255) not null,
+custo numeric(10, 2) not null,
+dias_validade integer not null
+);
+
+create table unidade_medida(
+id serial primary key,
+nome varchar(255) not null
+);
+
+create table lanche_ingrediente(
+id serial primary key,
+lanche_id integer not null,
+ingrediente_id integer not null,
+unidade_medida_id integer not null,
+quantidade numeric(10, 2) not null,
+foreign key (lanche_id) references lanche(id),
+foreign key (ingrediente_id) references ingrediente(id),
+foreign key (unidade_medida_id) references unidade_medida(id)
+);
+
+insert into unidade_medida(nome)values('Kg'),('Un'),('g');
+
+insert into ingrediente(nome, custo, dias_validade)values('Pao', 0.5, 3),('Alface', 0.3, 2),('Hamburguer', 2.5, 7);
