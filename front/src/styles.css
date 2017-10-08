@@ -1,1 +1,63 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+.screen-start {
+  animation-name: start-screen;
+  animation-duration: 0.6s;
+}
+
+@keyframes start-screen {
+  from {
+    opacity: 0;
+  };
+  to {
+    opacity: 1;
+  };
+}
+
+.cadastro {
+  padding: 15px;
+}
+
+.bota-cadastro {
+  margin-bottom: 6px;
+  /*max-width: 60px;*/
+}
+
+.botao-salvar {
+  background-color: #0916c2;
+  transition: 0.4s;
+  color: #FFF !important;
+  font-weight: bold;
+}
+
+.botao-salvar:hover:not(:disabled) {
+  background-color: #242fc6;
+}
+
+.botao-edicao {
+  background-color: #009a0f;
+  transition: 0.4s;
+  color: #FFF !important;
+  font-weight: bold;
+}
+
+.botao-edicao:hover:not(:disabled) {
+  background-color: #1fb32e;
+}
+
+.botao-exclusao {
+  background-color: #bb0c0c;
+  transition: 0.4s;
+  color: #FFF !important;
+  font-weight: bold;
+}
+
+.botao-exclusao:hover:not(:disabled) {
+  background-color: #bd2e2e;
+}
+
+.botoes-cadastro {
+  display: flex;
+  flex-direction: column;
+}

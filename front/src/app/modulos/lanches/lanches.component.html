@@ -1,0 +1,43 @@
+<div class="screen-start cadastro">
+
+  <div class="row">
+    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+      <div class="botoes-cadastro">
+        <button type="button" name="button" class="btn btn-md botao-salvar bota-cadastro"
+          (click)="createLanche()">
+          <span>Criar</span>
+        </button>
+        <button type="button" name="button" class="btn btn-md botao-edicao bota-cadastro"
+          [disabled]="!currentLanche" (click)="updateLanche()">
+          <span>Editar</span>
+        </button>
+        <!-- <button type="button" name="button" class="btn btn-md botao-exclusao bota-cadastro"
+          [disabled]="!currentLanche" (click)="delete()">
+          <span>Excluir</span>
+        </button> -->
+      </div>
+    </div>
+
+    <div class="col-lg-10 col-md-10 col-sm-8 col-xs-12">
+      <div class="table-responsive">
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>Lanche</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lanche of lanches"
+              [class]="'item-lanche ' + (lanche.selecionado ? 'fix-color-row' : '')"
+              (click)="openInformationLanche(lanche)">
+              <td>{{lanche.lanche.nome}}</td>
+              <td>{{lanche.lanche.valor | currency:'BRL':true:'1.2-2'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

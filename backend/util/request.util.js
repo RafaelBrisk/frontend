@@ -1,153 +1,153 @@
 'use strict';
 
-const client = require('../config/database');
-const app = require('../config/app');
+function getParams(body, campos) {
+  const params = [];
+  for (const campo of campos) {
+    const props = campo.body.split('\.');
+    let valueBody = body;
 
-function post(url, table, properties) {
-  app.post(url, (req, res) => {
-    for (const prop of properties) {
-      if (prop === 'id') {
-        const index = properties.indexOf(prop);
-        properties.splice(index, 1);
+    for (const prop of props) {
+      if (valueBody) {
+        valueBody = valueBody[prop];
+      } else {
         break;
       }
     }
 
-    let sql = 'INSERT INTO ';
-    sql += table;
-    sql += '(';
+    params.push({ prop: campo.name, value: valueBody });
+  }
+  return params;
+}
 
-    let strParametros = '';
-    const parametros = [];
-    for (let i = 0; i < properties.length; i++) {
-      sql += properties[i];
+function validNotNull(notNullProperties, body) {
+  const camposNulos = [];
+  for (const notNullProp of notNullProperties) {
+    const props = notNullProp.split('\.');
+    let valueBody = body;
 
-      strParametros += '$';
-      strParametros += (i + 1);
-      if (i !== (properties.length - 1)) {
-        sql += ', ';
-        strParametros += ', ';
+    for (const prop of props) {
+      if (valueBody) {
+        valueBody = valueBody[prop];
+      } else {
+        break;
       }
-
-      parametros.push(req.body[properties[i]]);
     }
 
-    sql += ')VALUES(';
-    sql += strParametros;
-    sql += ');';
+    if (valueBody) {
+      camposNulos.push(notNullProp);
+    }
+  }
 
-    client.query(sql, parametros, (error, item) => {
-      if (error) {
-        res.status(400).json(error);
-        console.log(error);
-      } else {
-        res.status(201).json(item.rows);
-      }
-    });
-  });
+  return camposNulos;
 }
 
-function put(url, table, properties) {
-  app.put(url, (req, res) => {
+function getDefaultMensage(camposNulos) {
+  let retorno = null;
+  if (camposNulos.length) {
+    let error = `Esses campos não podem ser nulos: [`;
 
-    let sql = 'UPDATE ';
-    sql += table;
-    sql += ' SET ';
+    let i = 0;
+    for (const campo of camposNulos) {
+      error += campo;
 
-    const parametros = [];
-    for (let i = 0; i < properties.length; i++) {
-      sql += properties[i];
-      sql += ' = $';
-      sql += (i + 1);
-      if (i !== (properties.length - 1)) {
-        sql += ', ';
+      if (i !== (camposNulos.length - 1)) {
+        error += ', ';
       }
 
-      parametros.push(req.body[properties[i]]);
+      i++;
+    }
+    error += ']';
+
+    retorno = error;
+  }
+
+  return retorno;
+}
+
+const client = require('../config/database');
+const app = require('../config/app');
+
+function post(table, properties) {
+  let sql = `INSERT INTO ${table}(`;
+
+  let strParametros = '';
+  const params = [];
+  for (let i = 0; i < properties.length; i++) {
+    sql += properties[i].prop;
+
+    strParametros += `$${i + 1}`;
+    if (i !== (properties.length - 1)) {
+      sql += ', ';
+      strParametros += ', ';
     }
 
-    sql += ' WHERE id = $';
-    sql += properties.length + 1;
-    sql += ';';
-    parametros.push(req.body['id']);
+    params.push(properties[i].value);
+  }
 
-    client.query(sql, parametros, (error, item) => {
-      if (error) {
+  sql += `)VALUES(${strParametros}) RETURNING id;`;
+
+  return { sql: sql, params: params };
+}
+
+function put(table, properties, id) {
+  let sql = `UPDATE ${table} SET `;
+
+  const params = [];
+  for (let i = 0; i < properties.length; i++) {
+    sql += `${properties[i].prop} = $${i + 1}`;
+    if (i !== (properties.length - 1)) {
+      sql += ', ';
+    }
+
+    params.push(properties[i].value);
+  }
+
+  sql += ` WHERE id = $${properties.length + 1} RETURNING id;`;
+  params.push(id);
+
+  return { sql: sql, params: params };
+}
+
+function get(table) {
+  const sql = `SELECT * FROM ${table};`;
+  return { sql: sql, params: [] };
+}
+
+function getOne(table, id) {
+  const sql = `SELECT * FROM ${table} WHERE id = $1;`;
+  return { sql: sql, params: [id] };
+}
+
+function remove(table, id) {
+  const sql = `DELETE FROM ${table}  WHERE id = $1;`;
+  return { sql: sql, params: [id] };
+}
+
+function request(client, sql, params, res) {
+  client.query(sql, params, (error, item) => {
+    if (error) {
+      if (res) {
         res.status(400).json(error);
-        console.log(error);
-      } else {
+      }
+      console.log(error);
+    } else {
+      if (res) {
         res.status(200).json(item.rows);
       }
-    });
+    }
   });
 }
 
-function getAll(url, table) {
-  app.get(url, (req, res) => {
-
-    let sql = 'SELECT * FROM ';
-    sql += table;
-    sql += ';';
-
-    client.query(sql, [], (error, item) => {
-      if (error) {
-        res.status(400).json(error);
-        console.log(error);
-      } else {
-        res.status(200).json(item.rows);
-      }
-    });
-  });
-}
-
-function getOne(url, table) {
-  app.get(url, (req, res) => {
-
-    let sql = 'SELECT * FROM ';
-    sql += table;
-    sql += ' WHERE id = $1;';
-
-    const id = req.params.id;
-
-    client.query(sql, [id], (error, item) => {
-      if (error) {
-        res.status(400).json(error);
-        console.log(error);
-      } else {
-        res.status(200).json(item.rows);
-      }
-    });
-  });
-}
-
-function remove(url, table) {
-  app.delete(url, (req, res) => {
-
-    let sql = 'DELETE FROM ';
-    sql += table;
-    sql += ' WHERE id = $1;';
-
-    const id = req.params.id;
-
-    client.query(sql, [id], (error, item) => {
-      if (error) {
-        res.status(400).json(error);
-        console.log(error);
-      } else {
-        res.status(200).json(item.rows);
-      }
-    });
-  });
-}
-
-function createEndpoints(url, tableName, properties) {
-  post(url, tableName, properties);
-  put(url, tableName, properties);
-  getAll(url, tableName);
-  getOne(url + '/:id', tableName);
-  remove(url + '/:id', tableName);
-}
-
-const exp = { createEndpoints: createEndpoints };
+const exp = {
+  validNotNull: validNotNull,
+  getDefaultMensage: getDefaultMensage,
+  post: post,
+  put: put,
+  get: get,
+  getOne: getOne,
+  remove: remove,
+  request: request,
+  getParams: getParams
+};
 
 module.exports = exp;

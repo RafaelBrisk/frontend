@@ -1,0 +1,67 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Criar ou editar um lanche</h4>
+</div>
+<div class="modal-body" *ngIf="lanche">
+  <div class="row">
+    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 form-group">
+      <label class="form-control-label">Nome</label>
+      <input type="text" name="nome" [(ngModel)]="lanche.nome" class="form-control input-sm" />
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 form-group">
+      <label class="form-control-label">Valor</label>
+      <input type="number" name="valor" [(ngModel)]="lanche.valor" class="form-control input-sm" />
+    </div>
+  </div>
+  <!-- <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">
+      <button type="button" name="ingrediente" (click)="addIngrediente()" class="btn btn-sm botao-edicao">
+        <span>Adicionar Ingrediente</span>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
+      <table class="table table-condensed table-striped">
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th>Quantidade</th>
+            <th>Unidade de medida</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ingrediente of lanche.ingredientes">
+            <td>
+              <select class="form-control input-sm" name="ingrediente_{{ingrediente.ingrediente.id}}"
+                [(ngModel)]="ingrediente.ingrediente">
+                <option [ngValue]="ingredienteOption.id === ingrediente.ingrediente.id ?
+                  ingredienteOption : ingrediente.ingrediente" *ngFor="let ingredienteOption of ingredientes">
+                  {{ingredienteOption.nome}}
+                </option>
+              </select>
+            </td>
+            <td>
+              <input type="number" name="quantidade" [(ngModel)]="ingrediente.quantidade"
+                class="form-control input-sm" />
+            </td>
+            <td>
+              <select class="form-control input-sm" name="unidadeMedida_{{ingrediente.ingrediente.id}}"
+                [(ngModel)]="ingrediente.unidadeMedida">
+                <option [ngValue]="unidade.id === ingrediente.unidadeMedida.id ?
+                  unidade : ingrediente.unidadeMedida" *ngFor="let unidade of unidadesMedidas">
+                  {{unidade.nome}}
+                </option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> -->
+</div>
+<div class="modal-footer" *ngIf="lanche">
+  <button type="button" name="button" (click)="concluir()" class="btn btn-sm botao-salvar"
+    [disabled]="!isValid()">
+    <span>Salvar</span>
+  </button>
+</div>

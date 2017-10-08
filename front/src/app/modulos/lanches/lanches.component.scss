@@ -1,0 +1,37 @@
+$cor-hover-lanche: #540774;
+$cor-hover-ingrediente: #6b3eeb;
+
+.item-lanche {
+  cursor: pointer;
+  user-select: none;
+}
+
+.item-lanche:hover {
+  background-color: $cor-hover-lanche;
+  color: #fff;
+}
+
+.table-ingrediente {
+  background-color: inherit;
+  margin-bottom: 0;
+  border: 1px solid #c7c7c7;
+}
+
+.table-ingrediente > tfoot > tr {
+  border-top: 2px solid #c7c7c7;
+}
+
+.item-ingrediente {
+  cursor: crosshair;
+  user-select: none;
+}
+
+.item-ingrediente:hover {
+  background-color: $cor-hover-ingrediente;
+  color: #fff;
+}
+
+.fix-color-row {
+  background-color: $cor-hover-lanche;
+  color: #fff;
+}
